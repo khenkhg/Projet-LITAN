@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useAuth } from '@/hooks/useAuth'
 
 /** Navigation items rendered both in the desktop bar and mobile drawer. */
 const NAV_ITEMS = [
@@ -17,6 +18,7 @@ const NAV_ITEMS = [
 
 export default function Header() {
   const { t } = useTranslation()
+  const { user, isAuthenticated, isPending, logout, isLoggingOut } = useAuth()
   const [mobileOpen, setMobileOpen] = useState(false)
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
@@ -52,14 +54,39 @@ export default function Header() {
             ))}
           </nav>
 
-          {/* Auth button (placeholder — implemented in Milestone 1B) */}
-          <div className="hidden lg:flex items-center gap-2">
-            <a
-              href="/accounts/google/login/"
-              className="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded hover:bg-primary-700 transition-colors"
-            >
-              {t('nav.login')}
-            </a>
+          {/* Auth controls */}
+          <div className="hidden lg:flex items-center gap-3">
+            {isAuthenticated ? (
+              <div className="flex items-center gap-3">
+                {isPending ? (
+                  <Link
+                    to="/en-attente"
+                    className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 hover:bg-yellow-200 transition-colors"
+                  >
+                    ⏳ {t('auth.pendingBadge')}
+                  </Link>
+                ) : (
+                  <span className="text-sm font-medium text-gray-700 truncate max-w-[150px]">
+                    {user.first_name || user.email}
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={() => logout()}
+                  disabled={isLoggingOut}
+                  className="px-3 py-1.5 border border-gray-300 text-gray-700 text-xs font-medium rounded hover:bg-gray-50 transition-colors disabled:opacity-50"
+                >
+                  {t('nav.logout')}
+                </button>
+              </div>
+            ) : (
+              <a
+                href="/accounts/google/login/"
+                className="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded hover:bg-primary-700 transition-colors flex items-center gap-2"
+              >
+                <span>{t('auth.loginWithGoogle')}</span>
+              </a>
+            )}
           </div>
 
           {/* Mobile hamburger */}
@@ -72,12 +99,10 @@ export default function Header() {
             className="lg:hidden p-2 rounded text-gray-600 hover:bg-gray-100"
           >
             {mobileOpen ? (
-              /* X icon */
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             ) : (
-              /* Hamburger icon */
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
@@ -105,13 +130,36 @@ export default function Header() {
                 {t(key)}
               </NavLink>
             ))}
-            <div className="pt-2 border-t border-gray-100 mt-1">
-              <a
-                href="/accounts/google/login/"
-                className="block px-3 py-2 bg-primary-600 text-white text-sm font-medium rounded text-center"
-              >
-                {t('nav.login')}
-              </a>
+            <div className="pt-3 border-t border-gray-100 mt-2">
+              {isAuthenticated ? (
+                <div className="flex flex-col gap-2">
+                  <div className="text-sm font-medium text-gray-700 px-3">
+                    {user.full_name || user.email}
+                    {isPending && (
+                      <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs bg-yellow-100 text-yellow-800">
+                        {t('auth.pendingBadge')}
+                      </span>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileOpen(false)
+                      logout()
+                    }}
+                    className="w-full text-left px-3 py-2 text-sm text-red-600 font-medium hover:bg-red-50 rounded"
+                  >
+                    {t('nav.logout')}
+                  </button>
+                </div>
+              ) : (
+                <a
+                  href="/accounts/google/login/"
+                  className="block px-3 py-2 bg-primary-600 text-white text-sm font-medium rounded text-center"
+                >
+                  {t('auth.loginWithGoogle')}
+                </a>
+              )}
             </div>
           </div>
         </nav>

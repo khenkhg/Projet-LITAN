@@ -156,11 +156,17 @@ REST_FRAMEWORK = {
 # ---------------------------------------------------------------------------
 # django-allauth — Google OAuth, restricted to @estin.dz
 # ---------------------------------------------------------------------------
+ACCOUNT_ADAPTER = "apps.accounts.adapters.LitanAccountAdapter"
+SOCIALACCOUNT_ADAPTER = "apps.accounts.adapters.LitanSocialAccountAdapter"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_VERIFICATION = "none"  # Google already verified the email
-SOCIALACCOUNT_ADAPTER = "apps.accounts.adapters.LitanSocialAccountAdapter"
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_LOGIN_ON_GET = True
+LOGIN_REDIRECT_URL = "/"
+ACCOUNT_LOGOUT_REDIRECT_URL = "/"
+
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "APP": {

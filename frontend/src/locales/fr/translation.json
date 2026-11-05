@@ -33,7 +33,9 @@
     "pendingTitle": "Compte en attente d'approbation",
     "pendingMessage": "Votre compte a été créé et est en attente de validation par le directeur ou l'administrateur du site. Vous serez notifié par e-mail dès que votre compte sera approuvé.",
     "rejectedMessage": "Votre demande d'accès a été rejetée. Contactez l'administration pour plus d'informations.",
-    "logoutSuccess": "Vous avez été déconnecté."
+    "logoutSuccess": "Vous avez été déconnecté.",
+    "pendingBadge": "En attente",
+    "approvedBadge": "Membre approuvé"
   },
   "members": {
     "title": "Annuaire des membres",

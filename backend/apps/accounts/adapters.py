@@ -1,38 +1,65 @@
 """
-Social account adapter for django-allauth.
+Custom allauth adapters for LITAN laboratory platform.
 
 Security contract:
-  1. Only @estin.dz emails are accepted.
-  2. We verify the email domain on the SERVER from the OAuth token data,
-     never from the Google "hd" hint parameter (which can be spoofed).
-  3. First-time login creates the user with status=PENDING; the
-     director/admin must approve before the user can access the members area.
+  1. Traditional password signup is disabled (LitanAccountAdapter).
+  2. Only verified @estin.dz Google accounts are allowed (LitanSocialAccountAdapter).
+  3. Domain is checked case-insensitively from token payload, not Google's 'hd' parameter.
+  4. First login creates User with status=PENDING.
+  5. Users with status=REJECTED are immediately denied login.
 """
 
+from allauth.account.adapter import DefaultAccountAdapter
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth.exceptions import ImmediateHttpResponse
 from django.http import JsonResponse
-
+from apps.accounts.models import AccountStatus, User
 
 ALLOWED_DOMAIN = "estin.dz"
 
 
+class LitanAccountAdapter(DefaultAccountAdapter):
+    """
+    Disable traditional password signup. Only Google OAuth is allowed.
+    """
+
+    def is_open_for_signup(self, request):
+        return False
+
+
 class LitanSocialAccountAdapter(DefaultSocialAccountAdapter):
+    """
+    Restrict social login strictly to verified @estin.dz email addresses.
+    """
+
+    def is_open_for_signup(self, request, sociallogin):
+        return True
 
     def pre_social_login(self, request, sociallogin):
-        """
-        Called after a successful OAuth exchange but before the user is
-        connected/created. Reject any email not from @estin.dz.
-        """
-        email: str = sociallogin.account.extra_data.get("email", "")
+        extra_data = sociallogin.account.extra_data or {}
+        raw_email = extra_data.get("email") or ""
+        email = raw_email.strip().lower()
 
-        # Normalize and check domain — do NOT use sociallogin.account.extra_data["hd"]
-        if not email.lower().endswith(f"@{ALLOWED_DOMAIN}"):
+        # 1. Require verified email
+        is_verified = extra_data.get("email_verified")
+        if is_verified is None:
+            is_verified = extra_data.get("verified_email", False)
+
+        if not is_verified:
+            raise ImmediateHttpResponse(
+                JsonResponse(
+                    {"detail": "L'adresse e-mail Google doit être vérifiée."},
+                    status=403,
+                )
+            )
+
+        # 2. Server-side domain check (case-insensitive, independent of 'hd')
+        if not email.endswith(f"@{ALLOWED_DOMAIN}"):
             raise ImmediateHttpResponse(
                 JsonResponse(
                     {
                         "detail": (
-                            "Seules les adresses @estin.dz sont autorisées "
+                            f"Seules les adresses @{ALLOWED_DOMAIN} sont autorisées "
                             "sur cette plateforme."
                         )
                     },
@@ -40,15 +67,39 @@ class LitanSocialAccountAdapter(DefaultSocialAccountAdapter):
                 )
             )
 
+        # 3. Check if user already exists
+        user = None
+        if sociallogin.is_existing:
+            user = sociallogin.user
+        else:
+            try:
+                user = User.objects.get(email__iexact=email)
+                sociallogin.connect(request, user)
+            except User.DoesNotExist:
+                pass
+
+        # 4. Refuse rejected accounts
+        if user and user.status == AccountStatus.REJECTED:
+            raise ImmediateHttpResponse(
+                JsonResponse(
+                    {
+                        "detail": (
+                            "Votre demande d'accès a été rejetée par l'administration du laboratoire. "
+                            "Contactez l'administration pour plus d'informations."
+                        )
+                    },
+                    status=403,
+                )
+            )
+
+    def populate_user(self, request, sociallogin, data):
+        user = super().populate_user(request, sociallogin, data)
+        user.status = AccountStatus.PENDING
+        return user
+
     def save_user(self, request, sociallogin, form=None):
-        """
-        Override to set status=PENDING on first login (new user creation).
-        Existing approved users keep their status.
-        """
         user = super().save_user(request, sociallogin, form)
-        # Only set PENDING if the user was just created (no previous status)
-        from apps.accounts.models import AccountStatus
-        if not user.pk or user.status == AccountStatus.PENDING:
+        if not user.status or user.status == AccountStatus.PENDING:
             user.status = AccountStatus.PENDING
             user.save(update_fields=["status"])
         return user
