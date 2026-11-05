@@ -1,0 +1,128 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "laboratory": "Laboratoire",
+    "teams": "Équipes",
+    "members": "Membres",
+    "publications": "Publications",
+    "equipment": "Équipements",
+    "offers": "Offres",
+    "links": "Liens utiles",
+    "contact": "Contact",
+    "myProfile": "Mon profil",
+    "admin": "Administration",
+    "logout": "Se déconnecter",
+    "login": "Se connecter",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu"
+  },
+  "footer": {
+    "rights": "© {{year}} Laboratoire LITAN – ESTIN. Tous droits réservés.",
+    "address": "École Supérieure en Sciences et Technologie de l'Informatique et du Numérique, Béjaïa, Algérie"
+  },
+  "home": {
+    "title": "Bienvenue au Laboratoire LITAN",
+    "subtitle": "Laboratoire d'Informatique et Technologies Avancées du Numérique",
+    "latestNews": "Actualités récentes",
+    "latestPublications": "Publications récentes",
+    "viewAll": "Voir tout",
+    "learnMore": "En savoir plus"
+  },
+  "auth": {
+    "loginWithGoogle": "Se connecter avec Google (@estin.dz)",
+    "pendingTitle": "Compte en attente d'approbation",
+    "pendingMessage": "Votre compte a été créé et est en attente de validation par le directeur ou l'administrateur du site. Vous serez notifié par e-mail dès que votre compte sera approuvé.",
+    "rejectedMessage": "Votre demande d'accès a été rejetée. Contactez l'administration pour plus d'informations.",
+    "logoutSuccess": "Vous avez été déconnecté."
+  },
+  "members": {
+    "title": "Annuaire des membres",
+    "profile": "Profil",
+    "team": "Équipe",
+    "type": {
+      "permanent": "Permanent",
+      "associate": "Associé"
+    },
+    "researchDomains": "Domaines de recherche",
+    "bio": "Biographie",
+    "links": "Liens",
+    "works": "Travaux",
+    "publications": "Publications",
+    "downloadCV": "Télécharger le CV (PDF)",
+    "editProfile": "Modifier mon profil",
+    "visibility": {
+      "public": "Public",
+      "internal": "Membres",
+      "private": "Privé"
+    }
+  },
+  "teams": {
+    "title": "Équipes de recherche",
+    "researchAxes": "Axes de recherche",
+    "teamMembers": "Membres de l'équipe",
+    "editTeam": "Modifier la page de l'équipe"
+  },
+  "publications": {
+    "title": "Publications",
+    "type": {
+      "journal": "Article de revue",
+      "conference": "Communication de conférence",
+      "book_chapter": "Chapitre d'ouvrage",
+      "thesis": "Thèse / HDR",
+      "patent": "Brevet",
+      "preprint": "Prépublication",
+      "other": "Autre"
+    },
+    "addPublication": "Ajouter une publication",
+    "importDOI": "Importer via DOI",
+    "exportBibtex": "Exporter en BibTeX",
+    "filterByTeam": "Filtrer par équipe",
+    "filterByAuthor": "Filtrer par auteur",
+    "filterByYear": "Filtrer par année",
+    "filterByType": "Filtrer par type"
+  },
+  "equipment": {
+    "title": "Équipements et plateformes",
+    "specifications": "Caractéristiques",
+    "location": "Localisation",
+    "bookingComingSoon": "Réservation (bientôt disponible)"
+  },
+  "offers": {
+    "title": "Offres académiques",
+    "type": {
+      "stage": "Stage",
+      "pfe": "PFE",
+      "these": "Thèse de doctorat",
+      "postdoc": "Post-doctorat"
+    },
+    "supervisor": "Encadrant",
+    "deadline": "Date limite",
+    "duration": "Durée",
+    "contactSupervisor": "Contacter l'encadrant",
+    "expired": "Expirée",
+    "noOffers": "Aucune offre disponible en ce moment."
+  },
+  "links": {
+    "title": "Liens utiles",
+    "membersOnly": "Membres uniquement"
+  },
+  "contact": {
+    "title": "Contact",
+    "email": "E-mail",
+    "phone": "Téléphone",
+    "address": "Adresse"
+  },
+  "common": {
+    "loading": "Chargement…",
+    "error": "Une erreur s'est produite.",
+    "notFound": "Page introuvable.",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "confirm": "Confirmer",
+    "back": "Retour",
+    "search": "Rechercher",
+    "noResults": "Aucun résultat."
+  }
+}
